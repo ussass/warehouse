@@ -20,8 +20,16 @@ public class CategoryRestController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Category> getCategory(@PathVariable long id){
-        System.out.println(id);
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity<Category> getCategory(@PathVariable Long id){
+        if (id == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        Category category = categoryService.findById(id);
+
+        if (category == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(category, HttpStatus.OK);
     }
 }
