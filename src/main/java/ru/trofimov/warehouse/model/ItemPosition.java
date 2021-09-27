@@ -15,7 +15,7 @@ public class ItemPosition extends BaseEntity {
     private int amount;
 
     @Column(name = "goods_id")
-    private long goodsId;
+    private Long goodsId;
 
     public ItemPosition() {
     }
@@ -48,7 +48,17 @@ public class ItemPosition extends BaseEntity {
         return goodsId;
     }
 
-    public void setGoodsId(long goodsId) {
+    public void setGoodsId(Long goodsId) {
         this.goodsId = goodsId;
+    }
+
+    @Override
+    public String toString() {
+        return "ItemPosition{" +
+                "row=" + row +
+                ", place=" + place +
+                ", amount=" + amount +
+                ", goodsId=" + goodsId +
+                '}';
     }
 }

@@ -15,7 +15,7 @@ public class Goods extends BaseEntity{
     private long price;
 
     @Column(name = "category_id")
-    private long categoryId;
+    private Long categoryId;
 
     public Goods() {
     }
@@ -48,7 +48,17 @@ public class Goods extends BaseEntity{
         return categoryId;
     }
 
-    public void setCategoryId(long categoryId) {
+    public void setCategoryId(Long categoryId) {
         this.categoryId = categoryId;
+    }
+
+    @Override
+    public String toString() {
+        return "Goods{" +
+                "name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", price=" + price +
+                ", categoryId=" + categoryId +
+                '}';
     }
 }
