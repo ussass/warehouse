@@ -2,7 +2,6 @@ package ru.trofimov.warehouse.rest;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.trofimov.warehouse.model.Category;
@@ -34,7 +33,7 @@ public class CategoryRestController {
         return new ResponseEntity<>(category, HttpStatus.OK);
     }
 
-    @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("")
     public ResponseEntity<Category> saveCategory(@RequestBody Category category){
         HttpHeaders httpHeaders = new HttpHeaders();
         System.out.println("category.toString() = " + category.toString());
@@ -70,7 +69,6 @@ public class CategoryRestController {
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
 
     @GetMapping("")
     public ResponseEntity<List<Category>> getAllCategory(){

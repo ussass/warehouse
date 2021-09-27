@@ -2,7 +2,6 @@ package ru.trofimov.warehouse.rest;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.trofimov.warehouse.model.ItemPosition;
@@ -33,7 +32,7 @@ public class ItemPositionRestController {
         return new ResponseEntity<>(itemPosition, HttpStatus.OK);
     }
 
-    @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("")
     public ResponseEntity<ItemPosition> saveItemPosition(@RequestBody ItemPosition itemPosition){
         HttpHeaders httpHeaders = new HttpHeaders();
 
@@ -69,7 +68,6 @@ public class ItemPositionRestController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-
     @GetMapping("")
     public ResponseEntity<List<ItemPosition>> getAllItemPositions(){
         List<ItemPosition> itemPositions = itemPositionService.findAll();
@@ -80,5 +78,4 @@ public class ItemPositionRestController {
 
         return new ResponseEntity<>(itemPositions, HttpStatus.OK);
     }
-
 }
