@@ -14,7 +14,7 @@ public class ItemPosition extends BaseEntity {
 
     private int amount;
 
-    @Column(name = "goods")
+    @Column(name = "goods_id")
     private long goodsId;
 
     public ItemPosition() {

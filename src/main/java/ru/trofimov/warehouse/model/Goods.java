@@ -14,7 +14,7 @@ public class Goods extends BaseEntity{
 
     private long price;
 
-    @Column(name = "category")
+    @Column(name = "category_id")
     private long categoryId;
 
     public Goods() {
