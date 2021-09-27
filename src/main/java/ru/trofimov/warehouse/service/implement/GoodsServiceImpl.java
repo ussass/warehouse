@@ -38,4 +38,9 @@ public class GoodsServiceImpl implements GoodsService {
     public void delete(Long id) {
         goodsRepository.deleteById(id);
     }
+
+    @Override
+    public List<Goods> findByCategoryId(Long id) {
+        return goodsRepository.findByCategoryId(id);
+    }
 }

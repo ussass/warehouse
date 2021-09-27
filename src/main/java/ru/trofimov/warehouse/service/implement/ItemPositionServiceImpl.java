@@ -38,4 +38,9 @@ public class ItemPositionServiceImpl implements ItemPositionService {
     public void delete(Long id) {
         itemPositionRepository.deleteById(id);
     }
+
+    @Override
+    public List<ItemPosition> findByGoodsId(Long id) {
+        return itemPositionRepository.findByGoodsId(id);
+    }
 }

@@ -14,4 +14,5 @@ public interface GoodsService {
 
     void delete(Long id);
 
+    List<Goods> findByCategoryId(Long id);
 }

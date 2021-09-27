@@ -13,4 +13,6 @@ public interface ItemPositionService {
     ItemPosition save(ItemPosition itemPosition);
 
     void delete(Long id);
+
+    List<ItemPosition> findByGoodsId(Long id);
 }
