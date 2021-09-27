@@ -5,7 +5,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.trofimov.warehouse.model.Category;
+import ru.trofimov.warehouse.model.Goods;
 import ru.trofimov.warehouse.service.CategoryService;
+import ru.trofimov.warehouse.service.GoodsService;
 
 import java.util.List;
 
@@ -15,8 +17,11 @@ public class CategoryRestController {
 
     private final CategoryService categoryService;
 
-    public CategoryRestController(CategoryService categoryService) {
+    private final GoodsService goodsService;
+
+    public CategoryRestController(CategoryService categoryService, GoodsService goodsService) {
         this.categoryService = categoryService;
+        this.goodsService = goodsService;
     }
 
     @GetMapping("/{id}")
@@ -64,6 +69,8 @@ public class CategoryRestController {
         if (category == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        List<Goods> goodsList = goodsService.findByCategoryId(id);
+        goodsList.forEach(goods -> goods.setCategoryId(null));
 
         categoryService.delete(id);
 
