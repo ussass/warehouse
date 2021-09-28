@@ -5,8 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "item_position")
-public class ItemPosition extends BaseEntity {
+@Table(name = "storage")
+public class Storage extends BaseEntity {
 
     private int row;
 
@@ -17,7 +17,7 @@ public class ItemPosition extends BaseEntity {
     @Column(name = "goods_id")
     private Long goodsId;
 
-    public ItemPosition() {
+    public Storage() {
     }
 
     public int getRow() {

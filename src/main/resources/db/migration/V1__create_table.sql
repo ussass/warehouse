@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS goods
     "category_id" BIGINT REFERENCES category (id)
 );
 
-CREATE TABLE IF NOT EXISTS item_position
+CREATE TABLE IF NOT EXISTS storage
 (
     id         BIGSERIAL NOT NULL PRIMARY KEY,
     row        INT    NOT NULL,
