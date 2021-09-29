@@ -52,7 +52,6 @@ public class CategoryRestController {
     @PostMapping
     public ResponseEntity<Category> saveCategory(@RequestBody Category category){
         HttpHeaders httpHeaders = new HttpHeaders();
-        System.out.println("category.toString() = " + category.toString());
 
         if(category == null){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

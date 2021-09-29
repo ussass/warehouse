@@ -10,7 +10,7 @@ import ru.trofimov.warehouse.service.StorageService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/storage")
+@RequestMapping("/api/v1/categories/{categoryId}/goods/{goodsId}/storage/")
 public class StorageRestController {
     private final StorageService storageService;
 
@@ -18,7 +18,18 @@ public class StorageRestController {
         this.storageService = storageService;
     }
 
-    @GetMapping("/{id}")
+    @GetMapping
+    public ResponseEntity<List<Storage>> getAllStorage(@PathVariable Long categoryId, @PathVariable Long goodsId){
+        List<Storage> storage = storageService.findByCategoryIdAndGoodsId(categoryId, goodsId);
+
+        if (storage.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(storage, HttpStatus.OK);
+    }
+
+    @GetMapping("{id}")
     public ResponseEntity<Storage> getStorage(@PathVariable Long id){
         if (id == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -32,7 +43,7 @@ public class StorageRestController {
         return new ResponseEntity<>(storage, HttpStatus.OK);
     }
 
-    @PostMapping("")
+    @PostMapping
     public ResponseEntity<Storage> saveStorage(@RequestBody Storage storage){
         HttpHeaders httpHeaders = new HttpHeaders();
 
@@ -44,19 +55,20 @@ public class StorageRestController {
         return new ResponseEntity<>(storage, httpHeaders, HttpStatus.OK);
     }
 
-    @PutMapping("")
-    public ResponseEntity<Storage> updateStorage(@RequestBody Storage storage){
+    @PutMapping("{id}")
+    public ResponseEntity<Storage> updateStorage(@PathVariable Long id, @RequestBody Storage storage){
         HttpHeaders httpHeaders = new HttpHeaders();
 
         if(storage == null){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+        storage.setId(id);
         storageService.save(storage);
 
         return new ResponseEntity<>(storage, httpHeaders, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("{id}")
     public ResponseEntity<Storage> deleteStorage(@PathVariable Long id){
         Storage storage = storageService.findById(id);
         if (storage == null) {
@@ -66,16 +78,5 @@ public class StorageRestController {
         storageService.delete(id);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    @GetMapping("")
-    public ResponseEntity<List<Storage>> getAllStorage(){
-        List<Storage> storage = storageService.findAll();
-
-        if (storage.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        return new ResponseEntity<>(storage, HttpStatus.OK);
     }
 }

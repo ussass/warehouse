@@ -12,7 +12,7 @@ import ru.trofimov.warehouse.service.StorageService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/goods")
+@RequestMapping("/api/v1/categories/{categoryId}/goods/")
 public class GoodsRestController {
     private final GoodsService goodsService;
 
@@ -23,7 +23,18 @@ public class GoodsRestController {
         this.storageService = storageService;
     }
 
-    @GetMapping("/{id}")
+    @GetMapping
+    public ResponseEntity<List<Goods>> getAllGoods(@PathVariable Long categoryId){
+        List<Goods> goodsList = goodsService.findByCategoryId(categoryId);
+
+        if (goodsList.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(goodsList, HttpStatus.OK);
+    }
+
+    @GetMapping("{id}")
     public ResponseEntity<Goods> getGoods(@PathVariable Long id){
         if (id == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -37,7 +48,7 @@ public class GoodsRestController {
         return new ResponseEntity<>(goods, HttpStatus.OK);
     }
 
-    @PostMapping("")
+    @PostMapping
     public ResponseEntity<Goods> saveGoods(@RequestBody Goods goods){
         HttpHeaders httpHeaders = new HttpHeaders();
 
@@ -49,19 +60,20 @@ public class GoodsRestController {
         return new ResponseEntity<>(goods, httpHeaders, HttpStatus.OK);
     }
 
-    @PutMapping("")
-    public ResponseEntity<Goods> updateGoods(@RequestBody Goods goods){
+    @PutMapping("{id}")
+    public ResponseEntity<Goods> updateGoods(@PathVariable Long id, @RequestBody Goods goods){
         HttpHeaders httpHeaders = new HttpHeaders();
 
         if(goods == null){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+        goods.setId(id);
         goodsService.save(goods);
 
         return new ResponseEntity<>(goods, httpHeaders, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("{id}")
     public ResponseEntity<Goods> deleteGoods(@PathVariable Long id){
         Goods goods = goodsService.findById(id);
         if (goods == null) {
@@ -75,16 +87,5 @@ public class GoodsRestController {
         goodsService.delete(id);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    @GetMapping("")
-    public ResponseEntity<List<Goods>> getAllGoods(){
-        List<Goods> goodsList = goodsService.findAll();
-
-        if (goodsList.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        return new ResponseEntity<>(goodsList, HttpStatus.OK);
     }
 }
