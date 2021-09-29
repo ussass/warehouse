@@ -15,4 +15,6 @@ public interface StorageService {
     void delete(Long id);
 
     List<Storage> findByGoodsId(Long id);
+
+    List<Storage> findByCategoryIdAndGoodsId(Long categoryId, Long goodsId);
 }
