@@ -19,26 +19,17 @@ public class StorageRestController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Storage>> getAllStorage(@PathVariable Long categoryId, @PathVariable Long goodsId){
-        List<Storage> storage = storageService.findByCategoryIdAndGoodsId(categoryId, goodsId);
+    public ResponseEntity<List<Storage>> getAllStorage(@PathVariable long categoryId, @PathVariable long goodsId){
 
-        if (storage.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        List<Storage> storage = storageService.findByCategoryIdAndGoodsId(categoryId, goodsId);
 
         return new ResponseEntity<>(storage, HttpStatus.OK);
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Storage> getStorage(@PathVariable Long id){
-        if (id == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        Storage storage = storageService.findById(id);
+    public ResponseEntity<Storage> getStorage(@PathVariable long id){
 
-        if (storage == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        Storage storage = storageService.findById(id);
 
         return new ResponseEntity<>(storage, HttpStatus.OK);
     }
@@ -48,7 +39,7 @@ public class StorageRestController {
         HttpHeaders httpHeaders = new HttpHeaders();
 
         if(storage == null){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            throw new IllegalArgumentException("invalid request body");
         }
         storageService.save(storage);
 
@@ -56,11 +47,11 @@ public class StorageRestController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Storage> updateStorage(@PathVariable Long id, @RequestBody Storage storage){
+    public ResponseEntity<Storage> updateStorage(@PathVariable long id, @RequestBody Storage storage){
         HttpHeaders httpHeaders = new HttpHeaders();
 
         if(storage == null){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            throw new IllegalArgumentException("invalid request body");
         }
         storage.setId(id);
         storageService.save(storage);
@@ -69,11 +60,7 @@ public class StorageRestController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Storage> deleteStorage(@PathVariable Long id){
-        Storage storage = storageService.findById(id);
-        if (storage == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<Storage> deleteStorage(@PathVariable long id){
 
         storageService.delete(id);
 

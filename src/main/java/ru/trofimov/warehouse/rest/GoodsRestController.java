@@ -24,26 +24,17 @@ public class GoodsRestController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Goods>> getAllGoods(@PathVariable Long categoryId){
-        List<Goods> goodsList = goodsService.findByCategoryId(categoryId);
+    public ResponseEntity<List<Goods>> getAllGoods(@PathVariable long categoryId){
 
-        if (goodsList.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        List<Goods> goodsList = goodsService.findByCategoryId(categoryId);
 
         return new ResponseEntity<>(goodsList, HttpStatus.OK);
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Goods> getGoods(@PathVariable Long id){
-        if (id == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        Goods goods = goodsService.findById(id);
+    public ResponseEntity<Goods> getGoods(@PathVariable long id){
 
-        if (goods == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        Goods goods = goodsService.findById(id);
 
         return new ResponseEntity<>(goods, HttpStatus.OK);
     }
@@ -53,7 +44,7 @@ public class GoodsRestController {
         HttpHeaders httpHeaders = new HttpHeaders();
 
         if(goods == null){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            throw new IllegalArgumentException("invalid request body");
         }
         goodsService.save(goods);
 
@@ -61,11 +52,11 @@ public class GoodsRestController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Goods> updateGoods(@PathVariable Long id, @RequestBody Goods goods){
+    public ResponseEntity<Goods> updateGoods(@PathVariable long id, @RequestBody Goods goods){
         HttpHeaders httpHeaders = new HttpHeaders();
 
         if(goods == null){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            throw new IllegalArgumentException("invalid request body");
         }
         goods.setId(id);
         goodsService.save(goods);
@@ -74,15 +65,10 @@ public class GoodsRestController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Goods> deleteGoods(@PathVariable Long id){
-        Goods goods = goodsService.findById(id);
-        if (goods == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<Goods> deleteGoods(@PathVariable long id){
 
         List<Storage> storages = storageService.findByGoodsId(id);
         storages.forEach(storage -> storage.setGoodsId(null));
-
 
         goodsService.delete(id);
 
