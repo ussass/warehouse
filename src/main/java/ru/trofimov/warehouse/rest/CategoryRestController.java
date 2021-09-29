@@ -12,7 +12,7 @@ import ru.trofimov.warehouse.service.GoodsService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/category")
+@RequestMapping("/api/v1/categories/")
 public class CategoryRestController {
 
     private final CategoryService categoryService;
@@ -24,7 +24,18 @@ public class CategoryRestController {
         this.goodsService = goodsService;
     }
 
-    @GetMapping("/{id}")
+    @GetMapping
+    public ResponseEntity<List<Category>> getAllCategory(){
+        List<Category> categories = categoryService.findAll();
+
+        if (categories.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(categories, HttpStatus.OK);
+    }
+
+    @GetMapping("{id}")
     public ResponseEntity<Category> getCategory(@PathVariable Long id){
         if (id == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -38,7 +49,7 @@ public class CategoryRestController {
         return new ResponseEntity<>(category, HttpStatus.OK);
     }
 
-    @PostMapping("")
+    @PostMapping
     public ResponseEntity<Category> saveCategory(@RequestBody Category category){
         HttpHeaders httpHeaders = new HttpHeaders();
         System.out.println("category.toString() = " + category.toString());
@@ -51,19 +62,20 @@ public class CategoryRestController {
         return new ResponseEntity<>(category, httpHeaders, HttpStatus.OK);
     }
 
-    @PutMapping("")
-    public ResponseEntity<Category> updateCategory(@RequestBody Category category){
+    @PutMapping("{id}")
+    public ResponseEntity<Category> updateCategory(@PathVariable Long id, @RequestBody Category category){
         HttpHeaders httpHeaders = new HttpHeaders();
 
         if(category == null){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+        category.setId(id);
         categoryService.save(category);
 
         return new ResponseEntity<>(category, httpHeaders, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("{id}")
     public ResponseEntity<Category> deleteCategory(@PathVariable Long id){
         Category category = categoryService.findById(id);
         if (category == null) {
@@ -75,16 +87,5 @@ public class CategoryRestController {
         categoryService.delete(id);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    @GetMapping("")
-    public ResponseEntity<List<Category>> getAllCategory(){
-        List<Category> categories = categoryService.findAll();
-
-        if (categories.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        return new ResponseEntity<>(categories, HttpStatus.OK);
     }
 }
