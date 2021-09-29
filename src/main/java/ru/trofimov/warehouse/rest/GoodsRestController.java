@@ -5,9 +5,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.trofimov.warehouse.model.Goods;
-import ru.trofimov.warehouse.model.ItemPosition;
+import ru.trofimov.warehouse.model.Storage;
 import ru.trofimov.warehouse.service.GoodsService;
-import ru.trofimov.warehouse.service.ItemPositionService;
+import ru.trofimov.warehouse.service.StorageService;
 
 import java.util.List;
 
@@ -16,11 +16,11 @@ import java.util.List;
 public class GoodsRestController {
     private final GoodsService goodsService;
 
-    private final ItemPositionService itemPositionService;
+    private final StorageService storageService;
 
-    public GoodsRestController(GoodsService goodsService, ItemPositionService itemPositionService) {
+    public GoodsRestController(GoodsService goodsService, StorageService storageService) {
         this.goodsService = goodsService;
-        this.itemPositionService = itemPositionService;
+        this.storageService = storageService;
     }
 
     @GetMapping("/{id}")
@@ -68,10 +68,8 @@ public class GoodsRestController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        List<ItemPosition> itemPositions = itemPositionService.findByGoodsId(id);
-        itemPositions.forEach(System.out::println);
-        itemPositions.forEach(itemPosition -> itemPosition.setGoodsId(null));
-        itemPositions.forEach(System.out::println);
+        List<Storage> storages = storageService.findByGoodsId(id);
+        storages.forEach(storage -> storage.setGoodsId(null));
 
 
         goodsService.delete(id);

@@ -2,7 +2,6 @@ package ru.trofimov.warehouse.rest;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.trofimov.warehouse.model.Storage;
@@ -20,7 +19,7 @@ public class StorageRestController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Storage> getItemPosition(@PathVariable Long id){
+    public ResponseEntity<Storage> getStorage(@PathVariable Long id){
         if (id == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -33,8 +32,8 @@ public class StorageRestController {
         return new ResponseEntity<>(storage, HttpStatus.OK);
     }
 
-    @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Storage> saveItemPosition(@RequestBody Storage storage){
+    @PostMapping("")
+    public ResponseEntity<Storage> saveStorage(@RequestBody Storage storage){
         HttpHeaders httpHeaders = new HttpHeaders();
 
         if(storage == null){
@@ -46,7 +45,7 @@ public class StorageRestController {
     }
 
     @PutMapping("")
-    public ResponseEntity<Storage> updateItemPosition(@RequestBody Storage storage){
+    public ResponseEntity<Storage> updateStorage(@RequestBody Storage storage){
         HttpHeaders httpHeaders = new HttpHeaders();
 
         if(storage == null){
@@ -58,7 +57,7 @@ public class StorageRestController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Storage> deleteItemPosition(@PathVariable Long id){
+    public ResponseEntity<Storage> deleteStorage(@PathVariable Long id){
         Storage storage = storageService.findById(id);
         if (storage == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -69,16 +68,14 @@ public class StorageRestController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-
     @GetMapping("")
-    public ResponseEntity<List<Storage>> getAllItemPositions(){
-        List<Storage> storages = storageService.findAll();
+    public ResponseEntity<List<Storage>> getAllStorage(){
+        List<Storage> storage = storageService.findAll();
 
-        if (storages.isEmpty()) {
+        if (storage.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        return new ResponseEntity<>(storages, HttpStatus.OK);
+        return new ResponseEntity<>(storage, HttpStatus.OK);
     }
-
 }

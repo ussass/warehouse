@@ -12,30 +12,35 @@ import java.util.stream.StreamSupport;
 @Service
 public class StorageServiceImpl implements StorageService {
 
-    private final StorageRepository storageRepository;
+    private final StorageRepository itemPositionRepository;
 
-    public StorageServiceImpl(StorageRepository storageRepository) {
-        this.storageRepository = storageRepository;
+    public StorageServiceImpl(StorageRepository itemPositionRepository) {
+        this.itemPositionRepository = itemPositionRepository;
     }
 
     @Override
     public Storage findById(Long id) {
-        return storageRepository.findById(id).get();
+        return itemPositionRepository.findById(id).get();
     }
 
     @Override
     public List<Storage> findAll() {
-        return StreamSupport.stream(storageRepository.findAll().spliterator(), false)
+        return StreamSupport.stream(itemPositionRepository.findAll().spliterator(), false)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public Storage save(Storage storage) {
-        return storageRepository.save(storage);
+    public Storage save(Storage itemPosition) {
+        return itemPositionRepository.save(itemPosition);
     }
 
     @Override
     public void delete(Long id) {
-        storageRepository.deleteById(id);
+        itemPositionRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Storage> findByGoodsId(Long id) {
+        return itemPositionRepository.findByGoodsId(id);
     }
 }

@@ -10,7 +10,9 @@ public interface StorageService {
 
     List<Storage> findAll();
 
-    Storage save(Storage storage);
+    Storage save(Storage itemPosition);
 
     void delete(Long id);
+
+    List<Storage> findByGoodsId(Long id);
 }
