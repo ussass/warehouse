@@ -41,6 +41,8 @@ public class GoodsServiceImpl implements GoodsService {
 
     @Override
     public List<Goods> findByCategoryId(Long id) {
-        return goodsRepository.findByCategoryId(id);
+        return id == 0 ? StreamSupport.stream(goodsRepository.findAll().spliterator(), false)
+                .collect(Collectors.toList())
+                : goodsRepository.findByCategoryId(id);
     }
 }
