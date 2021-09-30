@@ -4,10 +4,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.trofimov.warehouse.model.Info;
 import ru.trofimov.warehouse.model.Storage;
 import ru.trofimov.warehouse.service.StorageService;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/categories/{categoryId}/goods/{goodsId}/storage/")
@@ -19,11 +22,18 @@ public class StorageRestController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Storage>> getAllStorage(@PathVariable long categoryId, @PathVariable long goodsId){
+    public ResponseEntity<Info<Storage>> getAllStorage(HttpServletRequest request,
+                                                       @RequestParam(defaultValue = "0") long offset,
+                                                       @RequestParam(defaultValue = "" + Long.MAX_VALUE) long limit,
+                                                       @PathVariable long categoryId, @PathVariable long goodsId){
 
-        List<Storage> storage = storageService.findByCategoryIdAndGoodsId(categoryId, goodsId);
+        List<Storage> storages = storageService.findByCategoryIdAndGoodsId(categoryId, goodsId);
+        long fullSize = storages.size();
+        storages = storages.stream().skip(offset).limit(limit).collect(Collectors.toList());
 
-        return new ResponseEntity<>(storage, HttpStatus.OK);
+        Info<Storage> info = new Info<>(offset, limit, storages, fullSize, request.getRequestURL().toString());
+
+        return new ResponseEntity<>(info, HttpStatus.OK);
     }
 
     @GetMapping("{id}")

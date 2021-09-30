@@ -6,10 +6,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.trofimov.warehouse.model.Category;
 import ru.trofimov.warehouse.model.Goods;
-import ru.trofimov.warehouse.model.MyEntiry;
+import ru.trofimov.warehouse.model.Info;
 import ru.trofimov.warehouse.service.CategoryService;
 import ru.trofimov.warehouse.service.GoodsService;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,18 +28,17 @@ public class CategoryRestController {
     }
 
     @GetMapping
-    public ResponseEntity<MyEntiry> getAllCategory(@RequestParam(defaultValue = "0") long offset,
-                                                   @RequestParam(defaultValue = "" + Long.MAX_VALUE) long limit){
+    public ResponseEntity<Info<Category>> getAllCategory(HttpServletRequest request,
+                                                         @RequestParam(defaultValue = "0") long offset,
+                                                         @RequestParam(defaultValue = "" + Long.MAX_VALUE) long limit){
 
         List<Category> categories = categoryService.findAll();
+        long fullSize = categories.size();
         categories = categories.stream().skip(offset).limit(limit).collect(Collectors.toList());
 
-        MyEntiry entiry = new MyEntiry();
-        entiry.setTotalItems(categories.size());
-        entiry.setOffset(offset);
-        entiry.setCategories(categories);
+        Info<Category> info = new Info<>(offset, limit, categories, fullSize, request.getRequestURL().toString());
 
-        return new ResponseEntity<>(entiry, HttpStatus.OK);
+        return new ResponseEntity<>(info, HttpStatus.OK);
     }
 
     @GetMapping("{id}")
