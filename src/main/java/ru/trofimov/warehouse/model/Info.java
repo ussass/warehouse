@@ -46,26 +46,26 @@ public class Info<T> {
         return nextPage;
     }
 
-    private String parameters(long limit, long fullSize, boolean isNext){
+    private String parameters(long limit, long fullSize, boolean isNext) {
         StringBuilder builder = new StringBuilder();
         String localOffset = "";
-        if (offset - totalItems > 0 && !isNext){
+        if (offset - totalItems > 0 && !isNext) {
             localOffset = "offset=" + (offset - totalItems);
         }
 
-        if (isNext){
-            if (offset + totalItems < fullSize){
+        if (isNext) {
+            if (offset + totalItems < fullSize) {
                 localOffset = "offset=" + (offset + totalItems);
-            }else {
+            } else {
                 return null;
             }
         }
 
-        if (localOffset.length() > 0){
+        if (localOffset.length() > 0) {
             builder.append(localOffset).append("&");
         }
 
-        if (offset >= 0 && limit != Long.MAX_VALUE){
+        if (offset >= 0 && limit != Long.MAX_VALUE) {
             builder.append("limit=").append(limit);
         }
 
