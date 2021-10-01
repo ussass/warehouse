@@ -18,6 +18,8 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/v1/categories/")
 public class CategoryRestController {
 
+    private final long DEFAULT_LIMIT = 50;
+
     private final CategoryService categoryService;
 
     private final GoodsService goodsService;
@@ -30,7 +32,7 @@ public class CategoryRestController {
     @GetMapping
     public ResponseEntity<Info<Category>> getAllCategory(HttpServletRequest request,
                                                          @RequestParam(defaultValue = "0") long offset,
-                                                         @RequestParam(defaultValue = "" + Long.MAX_VALUE) long limit){
+                                                         @RequestParam(defaultValue = "" + DEFAULT_LIMIT) long limit) {
 
         List<Category> categories = categoryService.findAll();
         long fullSize = categories.size();
@@ -42,7 +44,7 @@ public class CategoryRestController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Category> getCategory(@PathVariable long id){
+    public ResponseEntity<Category> getCategory(@PathVariable long id) {
 
         Category category = categoryService.findById(id);
 
@@ -50,22 +52,23 @@ public class CategoryRestController {
     }
 
     @PostMapping
-    public ResponseEntity<Category> saveCategory(@RequestBody Category category){
+    public ResponseEntity<Category> saveCategory(HttpServletRequest request, @RequestBody Category category) {
         HttpHeaders httpHeaders = new HttpHeaders();
 
-        if(category == null){
+        if (category == null) {
             throw new IllegalArgumentException("invalid request body");
         }
         categoryService.save(category);
+        httpHeaders.add("Location", request.getRequestURL().toString() + category.getId());
 
-        return new ResponseEntity<>(category, httpHeaders, HttpStatus.OK);
+        return new ResponseEntity<>(category, httpHeaders, HttpStatus.CREATED);
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Category> updateCategory(@PathVariable long id, @RequestBody Category category){
+    public ResponseEntity<Category> updateCategory(@PathVariable long id, @RequestBody Category category) {
         HttpHeaders httpHeaders = new HttpHeaders();
 
-        if(category == null){
+        if (category == null) {
             throw new IllegalArgumentException("invalid request body");
         }
         category.setId(id);
@@ -75,7 +78,7 @@ public class CategoryRestController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Category> deleteCategory(@PathVariable long id){
+    public ResponseEntity<Category> deleteCategory(@PathVariable long id) {
 
         List<Goods> goodsList = goodsService.findByCategoryId(id);
         goodsList.forEach(goods -> goods.setCategoryId(null));

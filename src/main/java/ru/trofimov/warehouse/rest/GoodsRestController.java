@@ -17,6 +17,9 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/v1/categories/{categoryId}/goods/")
 public class GoodsRestController {
+
+    private final long DEFAULT_LIMIT = 50;
+
     private final GoodsService goodsService;
 
     private final StorageService storageService;
@@ -29,8 +32,8 @@ public class GoodsRestController {
     @GetMapping
     public ResponseEntity<Info<Goods>> getAllGoods(HttpServletRequest request,
                                                    @RequestParam(defaultValue = "0") long offset,
-                                                   @RequestParam(defaultValue = "" + Long.MAX_VALUE) long limit,
-                                                   @PathVariable long categoryId){
+                                                   @RequestParam(defaultValue = "" + DEFAULT_LIMIT) long limit,
+                                                   @PathVariable long categoryId) {
 
         List<Goods> goodsList = goodsService.findByCategoryId(categoryId);
         long fullSize = goodsList.size();
@@ -42,7 +45,7 @@ public class GoodsRestController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Goods> getGoods(@PathVariable long id){
+    public ResponseEntity<Goods> getGoods(@PathVariable long id) {
 
         Goods goods = goodsService.findById(id);
 
@@ -50,22 +53,23 @@ public class GoodsRestController {
     }
 
     @PostMapping
-    public ResponseEntity<Goods> saveGoods(@RequestBody Goods goods){
+    public ResponseEntity<Goods> saveGoods(HttpServletRequest request, @RequestBody Goods goods) {
         HttpHeaders httpHeaders = new HttpHeaders();
 
-        if(goods == null){
+        if (goods == null) {
             throw new IllegalArgumentException("invalid request body");
         }
         goodsService.save(goods);
+        httpHeaders.add("Location", request.getRequestURL().toString() + goods.getId());
 
-        return new ResponseEntity<>(goods, httpHeaders, HttpStatus.OK);
+        return new ResponseEntity<>(goods, httpHeaders, HttpStatus.CREATED);
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Goods> updateGoods(@PathVariable long id, @RequestBody Goods goods){
+    public ResponseEntity<Goods> updateGoods(@PathVariable long id, @RequestBody Goods goods) {
         HttpHeaders httpHeaders = new HttpHeaders();
 
-        if(goods == null){
+        if (goods == null) {
             throw new IllegalArgumentException("invalid request body");
         }
         goods.setId(id);
@@ -75,7 +79,7 @@ public class GoodsRestController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Goods> deleteGoods(@PathVariable long id){
+    public ResponseEntity<Goods> deleteGoods(@PathVariable long id) {
 
         List<Storage> storages = storageService.findByGoodsId(id);
         storages.forEach(storage -> storage.setGoodsId(null));

@@ -15,6 +15,9 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/v1/categories/{categoryId}/goods/{goodsId}/storage/")
 public class StorageRestController {
+
+    private final long DEFAULT_LIMIT = 50;
+
     private final StorageService storageService;
 
     public StorageRestController(StorageService storageService) {
@@ -24,8 +27,8 @@ public class StorageRestController {
     @GetMapping
     public ResponseEntity<Info<Storage>> getAllStorage(HttpServletRequest request,
                                                        @RequestParam(defaultValue = "0") long offset,
-                                                       @RequestParam(defaultValue = "" + Long.MAX_VALUE) long limit,
-                                                       @PathVariable long categoryId, @PathVariable long goodsId){
+                                                       @RequestParam(defaultValue = "" + DEFAULT_LIMIT) long limit,
+                                                       @PathVariable long categoryId, @PathVariable long goodsId) {
 
         List<Storage> storages = storageService.findByCategoryIdAndGoodsId(categoryId, goodsId);
         long fullSize = storages.size();
@@ -37,7 +40,7 @@ public class StorageRestController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Storage> getStorage(@PathVariable long id){
+    public ResponseEntity<Storage> getStorage(@PathVariable long id) {
 
         Storage storage = storageService.findById(id);
 
@@ -45,22 +48,23 @@ public class StorageRestController {
     }
 
     @PostMapping
-    public ResponseEntity<Storage> saveStorage(@RequestBody Storage storage){
+    public ResponseEntity<Storage> saveStorage(HttpServletRequest request, @RequestBody Storage storage) {
         HttpHeaders httpHeaders = new HttpHeaders();
 
-        if(storage == null){
+        if (storage == null) {
             throw new IllegalArgumentException("invalid request body");
         }
         storageService.save(storage);
+        httpHeaders.add("Location", request.getRequestURL().toString() + storage.getId());
 
-        return new ResponseEntity<>(storage, httpHeaders, HttpStatus.OK);
+        return new ResponseEntity<>(storage, httpHeaders, HttpStatus.CREATED);
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Storage> updateStorage(@PathVariable long id, @RequestBody Storage storage){
+    public ResponseEntity<Storage> updateStorage(@PathVariable long id, @RequestBody Storage storage) {
         HttpHeaders httpHeaders = new HttpHeaders();
 
-        if(storage == null){
+        if (storage == null) {
             throw new IllegalArgumentException("invalid request body");
         }
         storage.setId(id);
@@ -70,7 +74,7 @@ public class StorageRestController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Storage> deleteStorage(@PathVariable long id){
+    public ResponseEntity<Storage> deleteStorage(@PathVariable long id) {
 
         storageService.delete(id);
 
