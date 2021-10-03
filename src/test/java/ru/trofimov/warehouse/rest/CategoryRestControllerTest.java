@@ -39,4 +39,34 @@ class CategoryRestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("{\"totalItems\":1,\"offset\":0,\"items\":[{\"id\":1,\"name\":\"test\"}],\"previousPage\":\"http://localhost/api/v1/categories/?limit=50\",\"nextPage\":null}")));
     }
+
+    @Test
+    void shouldGetAllCategoryWithOffset() throws Exception {
+        String url = "/api/v1/categories/?offset=1";
+        Category category = new Category();
+        category.setId(1L);
+        category.setName("test1");
+        Category category2 = new Category();
+        category.setId(2L);
+        category.setName("test2");
+        when(categoryService.findAll()).thenReturn(Arrays.asList(category, category2));
+        mockMvc.perform(get(url))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("{\"totalItems\":1,\"offset\":1,\"items\":[{\"id\":null,\"name\":null}],\"previousPage\":\"http://localhost/api/v1/categories/?limit=50\",\"nextPage\":null}")));
+    }
+
+    @Test
+    void shouldGetAllCategoryWithLimit() throws Exception {
+        String url = "/api/v1/categories/?limit=1";
+        Category category = new Category();
+        category.setId(1L);
+        category.setName("test1");
+        Category category2 = new Category();
+        category.setId(2L);
+        category.setName("test2");
+        when(categoryService.findAll()).thenReturn(Arrays.asList(category, category2));
+        mockMvc.perform(get(url))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("{\"totalItems\":1,\"offset\":0,\"items\":[{\"id\":2,\"name\":\"test2\"}],\"previousPage\":\"http://localhost/api/v1/categories/?limit=1\",\"nextPage\":\"http://localhost/api/v1/categories/?offset=1&limit=1\"}")));
+    }
 }

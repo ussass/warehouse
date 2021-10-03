@@ -43,4 +43,46 @@ class GoodsRestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("{\"totalItems\":0,\"offset\":0,\"items\":[],\"previousPage\":\"http://localhost/api/v1/categories/1/goods/?limit=50\",\"nextPage\":null}")));
     }
+
+    @Test
+    void shouldGetAllGoodsWithOffset() throws Exception {
+        String url = "/api/v1/categories/1/goods/?offset=1";
+        Goods goods = new Goods();
+        goods.setId(1L);
+        goods.setName("test1");
+        goods.setDescription("description1");
+        goods.setPrice(1);
+        goods.setCategoryId(1L);
+        Goods goods2 = new Goods();
+        goods.setId(2L);
+        goods.setName("test2");
+        goods.setDescription("description2");
+        goods.setPrice(2);
+        goods.setCategoryId(2L);
+        when(goodsService.findAll()).thenReturn(Arrays.asList(goods, goods2));
+        mockMvc.perform(get(url))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("{\"totalItems\":0,\"offset\":1,\"items\":[],\"previousPage\":\"http://localhost/api/v1/categories/1/goods/?offset=1&limit=50\",\"nextPage\":null}")));
+    }
+
+    @Test
+    void shouldGetAllGoodsWithLimit() throws Exception {
+        String url = "/api/v1/categories/1/goods/?limit=1";
+        Goods goods = new Goods();
+        goods.setId(1L);
+        goods.setName("test1");
+        goods.setDescription("description1");
+        goods.setPrice(1);
+        goods.setCategoryId(1L);
+        Goods goods2 = new Goods();
+        goods.setId(2L);
+        goods.setName("test2");
+        goods.setDescription("description2");
+        goods.setPrice(2);
+        goods.setCategoryId(2L);
+        when(goodsService.findAll()).thenReturn(Arrays.asList(goods,goods2));
+        mockMvc.perform(get(url))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("{\"totalItems\":0,\"offset\":0,\"items\":[],\"previousPage\":\"http://localhost/api/v1/categories/1/goods/?limit=1\",\"nextPage\":null}")));
+    }
 }
