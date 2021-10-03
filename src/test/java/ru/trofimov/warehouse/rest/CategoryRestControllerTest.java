@@ -11,16 +11,13 @@ import ru.trofimov.warehouse.service.GoodsService;
 
 import java.util.Arrays;
 
-import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.StringContains.containsString;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(CategoryRestController.class)
 class CategoryRestControllerTest {
-
 
     @MockBean
     private CategoryService categoryService;
@@ -42,6 +39,4 @@ class CategoryRestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("{\"totalItems\":1,\"offset\":0,\"items\":[{\"id\":1,\"name\":\"test\"}],\"previousPage\":\"http://localhost/api/v1/categories/?limit=50\",\"nextPage\":null}")));
     }
-
-
 }
