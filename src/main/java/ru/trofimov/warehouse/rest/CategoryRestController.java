@@ -1,90 +1,61 @@
 package ru.trofimov.warehouse.rest;
 
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 import ru.trofimov.warehouse.model.Category;
-import ru.trofimov.warehouse.model.Goods;
 import ru.trofimov.warehouse.model.Info;
-import ru.trofimov.warehouse.service.CategoryService;
-import ru.trofimov.warehouse.service.GoodsService;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-import java.util.stream.Collectors;
 
-@RestController
-@RequestMapping("/api/v1/categories/")
-public class CategoryRestController {
+public interface CategoryRestController {
 
-    private final long DEFAULT_LIMIT = 50;
+    @Operation(summary = "Get all categories with pagination")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Found categories",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Info.class))}),
+            @ApiResponse(responseCode = "404", description = "Did not find any categories",
+                    content = @Content)})
+    ResponseEntity<Info<Category>> getAllCategory(HttpServletRequest request, long offset, long limit);
 
-    private final CategoryService categoryService;
+    @Operation(summary = "Get a category by its id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Found the category",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Category.class))}),
+            @ApiResponse(responseCode = "400", description = "Invalid id supplied",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Category not found",
+                    content = @Content)})
+    ResponseEntity<Category> getCategory(long id);
 
-    private final GoodsService goodsService;
+    @Operation(summary = "Save new category")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Category saved",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Category.class))}),
+            @ApiResponse(responseCode = "422", description = "Invalid request body",
+                    content = @Content)})
+    ResponseEntity<Category> saveCategory(HttpServletRequest request, Category category);
 
-    public CategoryRestController(CategoryService categoryService, GoodsService goodsService) {
-        this.categoryService = categoryService;
-        this.goodsService = goodsService;
-    }
+    @Operation(summary = "Update a category by its id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Category updated",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Category.class))}),
+            @ApiResponse(responseCode = "422", description = "Invalid request body",
+                    content = @Content)})
+    ResponseEntity<Category> updateCategory(long id, Category category);
 
-    @GetMapping
-    public ResponseEntity<Info<Category>> getAllCategory(HttpServletRequest request,
-                                                         @RequestParam(defaultValue = "0") long offset,
-                                                         @RequestParam(defaultValue = "" + DEFAULT_LIMIT) long limit) {
-
-        List<Category> categories = categoryService.findAll();
-        long fullSize = categories.size();
-        categories = categories.stream().skip(offset).limit(limit).collect(Collectors.toList());
-
-        Info<Category> info = new Info<>(offset, limit, categories, fullSize, request.getRequestURL().toString());
-
-        return new ResponseEntity<>(info, HttpStatus.OK);
-    }
-
-    @GetMapping("{id}")
-    public ResponseEntity<Category> getCategory(@PathVariable long id) {
-
-        Category category = categoryService.findById(id);
-
-        return new ResponseEntity<>(category, HttpStatus.OK);
-    }
-
-    @PostMapping
-    public ResponseEntity<Category> saveCategory(HttpServletRequest request, @RequestBody Category category) {
-        HttpHeaders httpHeaders = new HttpHeaders();
-
-        if (category == null) {
-            throw new IllegalArgumentException("invalid request body");
-        }
-        categoryService.save(category);
-        httpHeaders.add("Location", request.getRequestURL().toString() + category.getId());
-
-        return new ResponseEntity<>(category, httpHeaders, HttpStatus.CREATED);
-    }
-
-    @PutMapping("{id}")
-    public ResponseEntity<Category> updateCategory(@PathVariable long id, @RequestBody Category category) {
-        HttpHeaders httpHeaders = new HttpHeaders();
-
-        if (category == null) {
-            throw new IllegalArgumentException("invalid request body");
-        }
-        category.setId(id);
-        categoryService.save(category);
-
-        return new ResponseEntity<>(category, httpHeaders, HttpStatus.OK);
-    }
-
-    @DeleteMapping("{id}")
-    public ResponseEntity<Category> deleteCategory(@PathVariable long id) {
-
-        List<Goods> goodsList = goodsService.findByCategoryId(id);
-        goodsList.forEach(goods -> goods.setCategoryId(null));
-
-        categoryService.delete(id);
-
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
+    @Operation(summary = "Remove a category by its id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Category deleted",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Category not found",
+                    content = @Content)})
+    ResponseEntity<Category> deleteCategory(long id);
 }
