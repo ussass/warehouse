@@ -6,6 +6,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.trofimov.warehouse.model.Storage;
+import ru.trofimov.warehouse.rest.implement.StorageRestControllerImpl;
 import ru.trofimov.warehouse.service.StorageService;
 
 import java.util.Arrays;
@@ -16,7 +17,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(StorageRestController.class)
+@WebMvcTest(StorageRestControllerImpl.class)
 class StorageRestControllerTest {
 
     @MockBean

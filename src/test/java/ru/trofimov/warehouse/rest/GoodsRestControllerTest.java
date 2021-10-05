@@ -6,6 +6,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.trofimov.warehouse.model.Goods;
+import ru.trofimov.warehouse.rest.implement.GoodsRestControllerImpl;
 import ru.trofimov.warehouse.service.GoodsService;
 import ru.trofimov.warehouse.service.StorageService;
 
@@ -17,7 +18,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(GoodsRestController.class)
+@WebMvcTest(GoodsRestControllerImpl.class)
 class GoodsRestControllerTest {
 
     @MockBean
