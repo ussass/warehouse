@@ -1,3 +1,11 @@
+-- admin/admin
+INSERT INTO users (login, password, roles) values ('admin', '$2a$10$csznBGiCXAQ.v4QyRSkbV.x8//TvJISzzRse21AgHTIgQoVF3jpfK', 'ADMIN');
+-- a/a
+INSERT INTO users (login, password, roles) values ('a', '$2a$10$Jgw7wVQNW.LxYIIsbi2Ug..Yb7SIEnn/y3Mo3tA.x6DW1A3rnkGye', 'ADMIN');
+-- xxx/123
+INSERT INTO users (login, password, roles) values ('user', '$2a$10$EOv4C4b69cJf1Jx9YCKLCe3No7Rui1CTywg6rFw5/i4yhHF/GIR2S', 'USER');
+
+
 INSERT INTO category (name) values ('Electronics');
 INSERT INTO category (name) values ('Appliances');
 INSERT INTO category (name) values ('Computers');
