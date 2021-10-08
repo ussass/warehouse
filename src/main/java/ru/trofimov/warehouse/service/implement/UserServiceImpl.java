@@ -74,4 +74,15 @@ public class UserServiceImpl implements UserService {
         logger.info("deleted user with id = {}", id);
         userRepository.deleteById(id);
     }
+
+    @Override
+    public User findByLoginAndPassword(String login, String password) {
+        User user = findByLogin(login);
+        if (user != null) {
+            if (passwordEncoder.matches(password, user.getPassword())) {
+                return user;
+            }
+        }
+        return null;
+    }
 }
