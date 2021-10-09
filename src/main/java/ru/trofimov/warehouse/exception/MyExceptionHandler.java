@@ -1,5 +1,6 @@
 package ru.trofimov.warehouse.exception;
 
+import io.jsonwebtoken.SignatureException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ public class MyExceptionHandler {
                 e.getMessage(),
                 "No data with this id number",
                 request.getRequestURI());
-        return new ResponseEntity<>(exception, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(exception, status);
     }
 
     @ExceptionHandler(EmptyResultDataAccessException.class)
@@ -36,6 +37,30 @@ public class MyExceptionHandler {
                 message,
                 "No data with this id number",
                 request.getRequestURI());
-        return new ResponseEntity<>(exception, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(exception, status);
+    }
+
+    @ExceptionHandler(InvalidRequestBodyException.class)
+    ResponseEntity<EntityNotFoundException> invalidLoginOrPassword (HttpServletRequest request, InvalidRequestBodyException e) {
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
+
+        EntityNotFoundException exception = new EntityNotFoundException(
+                status,
+                e.getMessage(),
+                "invalid login or password",
+                request.getRequestURI());
+        return new ResponseEntity<>(exception, status);
+    }
+
+    @ExceptionHandler(SignatureException.class)
+    ResponseEntity<EntityNotFoundException> invalidToken (HttpServletRequest request, SignatureException e) {
+        HttpStatus status = HttpStatus.FORBIDDEN;
+
+        EntityNotFoundException exception = new EntityNotFoundException(
+                status,
+                e.getMessage(),
+                "invalid token",
+                request.getRequestURI());
+        return new ResponseEntity<>(exception, status);
     }
 }

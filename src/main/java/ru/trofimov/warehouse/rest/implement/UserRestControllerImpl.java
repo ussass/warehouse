@@ -4,7 +4,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.trofimov.warehouse.exception.InvalidRequestBodyException;
 import ru.trofimov.warehouse.model.Info;
+import ru.trofimov.warehouse.model.Role;
 import ru.trofimov.warehouse.model.User;
 import ru.trofimov.warehouse.rest.UserRestController;
 import ru.trofimov.warehouse.security.Token;
@@ -31,7 +33,7 @@ public class UserRestControllerImpl implements UserRestController {
     }
 
     @GetMapping
-    public ResponseEntity<Info<User>> getAllCategory(HttpServletRequest request,
+    public ResponseEntity<Info<User>> getAllUsers(HttpServletRequest request,
                                                          @RequestParam(defaultValue = "0") long offset,
                                                          @RequestParam(defaultValue = "" + DEFAULT_LIMIT) long limit) {
         List<User> users = userService.findAll();
@@ -44,9 +46,24 @@ public class UserRestControllerImpl implements UserRestController {
     }
 
     @PostMapping("login")
-    public ResponseEntity<Token> saveStorage(HttpServletRequest request, @RequestBody User user) {
+    public ResponseEntity<Token> login(@RequestBody User user) {
         HttpHeaders httpHeaders = new HttpHeaders();
-        System.out.println("user.toString() = " + user.toString());
+
+        User authUser = userService.findByLoginAndPassword(user.getLogin(), user.getPassword());
+        Token token = new Token(jwtProvider.generateToken(authUser.getLogin()));
+        return new ResponseEntity<>(token, httpHeaders, HttpStatus.CREATED);
+    }
+
+    @PostMapping("signup")
+    public ResponseEntity<Token> signup(@RequestBody User user) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+
+        User newUser = userService.findByLogin(user.getLogin());
+        if (newUser != null){
+            throw new InvalidRequestBodyException("User with this login already exists");
+        }
+        user.addRole(Role.USER);
+        user = userService.save(user);
 
         Token token = new Token(jwtProvider.generateToken(user.getLogin()));
         return new ResponseEntity<>(token, httpHeaders, HttpStatus.CREATED);
