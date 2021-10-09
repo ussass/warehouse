@@ -32,6 +32,7 @@ public class UserRestControllerImpl implements UserRestController {
         this.jwtProvider = jwtProvider;
     }
 
+    @Override
     @GetMapping
     public ResponseEntity<Info<User>> getAllUsers(HttpServletRequest request,
                                                          @RequestParam(defaultValue = "0") long offset,
@@ -45,6 +46,7 @@ public class UserRestControllerImpl implements UserRestController {
         return new ResponseEntity<>(info, HttpStatus.OK);
     }
 
+    @Override
     @PostMapping("login")
     public ResponseEntity<Token> login(@RequestBody User user) {
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -54,6 +56,7 @@ public class UserRestControllerImpl implements UserRestController {
         return new ResponseEntity<>(token, httpHeaders, HttpStatus.CREATED);
     }
 
+    @Override
     @PostMapping("signup")
     public ResponseEntity<Token> signup(@RequestBody User user) {
         HttpHeaders httpHeaders = new HttpHeaders();
