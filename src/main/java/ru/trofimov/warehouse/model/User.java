@@ -57,8 +57,12 @@ public class User extends BaseEntity {
     }
 
     public Set<SimpleGrantedAuthority> getAuthorities() {
+        for (Role role : roles) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + role.name()));
+        }
         return authorities;
     }
+
 
     public void setAuthorities(Set<SimpleGrantedAuthority> authorities) {
         this.authorities = authorities;
