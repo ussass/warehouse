@@ -53,7 +53,7 @@ public class UserRestControllerImpl implements UserRestController {
 
         User authUser = userService.findByLoginAndPassword(user.getLogin(), user.getPassword());
         Token token = new Token(jwtProvider.generateToken(authUser.getLogin()));
-        return new ResponseEntity<>(token, httpHeaders, HttpStatus.CREATED);
+        return new ResponseEntity<>(token, httpHeaders, HttpStatus.OK);
     }
 
     @Override
