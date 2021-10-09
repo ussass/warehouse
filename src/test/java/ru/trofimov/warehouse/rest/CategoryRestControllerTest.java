@@ -2,11 +2,15 @@ package ru.trofimov.warehouse.rest;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.trofimov.warehouse.model.Category;
 import ru.trofimov.warehouse.rest.implement.CategoryRestControllerImpl;
+import ru.trofimov.warehouse.security.jwt.JwtProvider;
 import ru.trofimov.warehouse.service.CategoryService;
 import ru.trofimov.warehouse.service.GoodsService;
 
@@ -26,9 +30,13 @@ class CategoryRestControllerTest {
     @MockBean
     private GoodsService goodsService;
 
+    @MockBean
+    private JwtProvider jwtProvider;
+
     @Autowired
     private MockMvc mockMvc;
 
+    @WithMockUser(roles = {"ADMIN", "USER"})
     @Test
     void shouldGetAllCategory() throws Exception {
         String url = "/api/v1/categories/";
@@ -41,6 +49,7 @@ class CategoryRestControllerTest {
                 .andExpect(content().string(containsString("{\"totalItems\":1,\"offset\":0,\"items\":[{\"id\":1,\"name\":\"test\"}],\"previousPage\":\"http://localhost/api/v1/categories/?limit=50\",\"nextPage\":null}")));
     }
 
+    @WithMockUser(roles = {"ADMIN", "USER"})
     @Test
     void shouldGetAllCategoryWithOffset() throws Exception {
         String url = "/api/v1/categories/?offset=1";
@@ -56,6 +65,7 @@ class CategoryRestControllerTest {
                 .andExpect(content().string(containsString("{\"totalItems\":1,\"offset\":1,\"items\":[{\"id\":null,\"name\":null}],\"previousPage\":\"http://localhost/api/v1/categories/?limit=50\",\"nextPage\":null}")));
     }
 
+    @WithMockUser(roles = {"ADMIN", "USER"})
     @Test
     void shouldGetAllCategoryWithLimit() throws Exception {
         String url = "/api/v1/categories/?limit=1";
