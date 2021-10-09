@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.trofimov.warehouse.exception.InvalidRequestBodyException;
 import ru.trofimov.warehouse.model.User;
 import ru.trofimov.warehouse.repositories.UserRepository;
 import ru.trofimov.warehouse.service.UserService;
@@ -83,6 +84,6 @@ public class UserServiceImpl implements UserService {
                 return user;
             }
         }
-        return null;
+        throw new InvalidRequestBodyException("invalid login or password");
     }
 }

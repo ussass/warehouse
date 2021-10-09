@@ -6,10 +6,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.trofimov.warehouse.model.User;
-import ru.trofimov.warehouse.security.jwtOld.JwtUser;
 import ru.trofimov.warehouse.service.UserService;
 
-@Service("userDetailServiceIml")
+@Service
 public class UserDetailServiceIml implements UserDetailsService {
 
     private final UserService userService;
@@ -22,11 +21,7 @@ public class UserDetailServiceIml implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
         User user = userService.findByLogin(login);
-        if (user == null){
-            throw new UsernameNotFoundException("User with login: " + login + " not found");
-        }
-
-        return JwtUser.fromUser(user);
+        return SecurityUser.fromUser(user);
     }
 }
 

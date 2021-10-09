@@ -1,11 +1,15 @@
 package ru.trofimov.warehouse.security.jwt;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import ru.trofimov.warehouse.security.UserDetailServiceIml;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
@@ -19,6 +23,8 @@ public class JwtProvider {
     @Value("${jwt.token.expired}")
     private long validity;
 
+    @Autowired
+    private UserDetailServiceIml userDetailServiceIml;
 
     public String generateToken(String login) {
         Date date = Date.from(LocalDate.now().plusDays(validity).atStartOfDay(ZoneId.systemDefault()).toInstant());
@@ -30,14 +36,16 @@ public class JwtProvider {
     }
 
     public boolean validateToken(String token) {
-        try {
+//        try {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
             return true;
-        } catch (Exception e) {
-//            log.severe("invalid token");
-            System.out.println("invalid token");
-        }
-        return false;
+//        } catch (Exception e) {
+////            log.severe("invalid token");
+//            // TODO: 09.10.2021
+//            System.out.println("invalid token");
+//            throw new InvalidTokenException("invalid token");
+//        }
+//        return false;
     }
 
     public String getLoginFromToken(String token) {
@@ -45,4 +53,17 @@ public class JwtProvider {
         return claims.getSubject();
     }
 
+    public String resolveToken(HttpServletRequest req) {
+        String bearerToken = req.getHeader("Authorization");
+        if (bearerToken != null && bearerToken.startsWith("Bearer_")) {
+            return bearerToken.substring(7);
+        }
+        return null;
+    }
+
+
+    public Authentication getAuthentication(String token) {
+        UserDetails userDetails = userDetailServiceIml.loadUserByUsername(getLoginFromToken(token));
+        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+    }
 }
