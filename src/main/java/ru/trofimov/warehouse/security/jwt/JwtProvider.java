@@ -36,16 +36,8 @@ public class JwtProvider {
     }
 
     public boolean validateToken(String token) {
-//        try {
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
-            return true;
-//        } catch (Exception e) {
-////            log.severe("invalid token");
-//            // TODO: 09.10.2021
-//            System.out.println("invalid token");
-//            throw new InvalidTokenException("invalid token");
-//        }
-//        return false;
+        Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
+        return true;
     }
 
     public String getLoginFromToken(String token) {
