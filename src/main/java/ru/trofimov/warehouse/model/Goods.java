@@ -44,7 +44,7 @@ public class Goods extends BaseEntity{
         this.price = price;
     }
 
-    public long getCategoryId() {
+    public Long getCategoryId() {
         return categoryId;
     }
 

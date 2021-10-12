@@ -44,7 +44,7 @@ public class Storage extends BaseEntity {
         this.amount = amount;
     }
 
-    public long getGoodsId() {
+    public Long getGoodsId() {
         return goodsId;
     }
 

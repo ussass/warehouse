@@ -2,10 +2,15 @@ package ru.trofimov.warehouse.rest;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.trofimov.warehouse.model.Storage;
+import ru.trofimov.warehouse.rest.implement.StorageRestControllerImpl;
+import ru.trofimov.warehouse.security.jwt.JwtProvider;
 import ru.trofimov.warehouse.service.StorageService;
 
 import java.util.Arrays;
@@ -16,7 +21,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(StorageRestController.class)
+@WebMvcTest(StorageRestControllerImpl.class)
 class StorageRestControllerTest {
 
     @MockBean
@@ -25,6 +30,10 @@ class StorageRestControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @MockBean
+    private JwtProvider jwtProvider;
+
+    @WithMockUser(roles = {"ADMIN", "USER"})
     @Test
     void shouldGetAllStorage() throws Exception {
         String url = "/api/v1/categories/1/goods/1/storage/";

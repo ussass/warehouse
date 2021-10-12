@@ -4,8 +4,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.trofimov.warehouse.model.Goods;
+import ru.trofimov.warehouse.rest.implement.GoodsRestControllerImpl;
+import ru.trofimov.warehouse.security.jwt.JwtFilter;
+import ru.trofimov.warehouse.security.jwt.JwtProvider;
 import ru.trofimov.warehouse.service.GoodsService;
 import ru.trofimov.warehouse.service.StorageService;
 
@@ -17,7 +21,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(GoodsRestController.class)
+@WebMvcTest(GoodsRestControllerImpl.class)
 class GoodsRestControllerTest {
 
     @MockBean
@@ -26,9 +30,13 @@ class GoodsRestControllerTest {
     @MockBean
     private StorageService storageService;
 
+    @MockBean
+    private JwtProvider jwtProvider;
+
     @Autowired
     private MockMvc mockMvc;
 
+    @WithMockUser(roles = {"ADMIN"})
     @Test
     void shouldGetAllGoods() throws Exception {
         String url = "/api/v1/categories/1/goods/";
@@ -44,6 +52,7 @@ class GoodsRestControllerTest {
                 .andExpect(content().string(containsString("{\"totalItems\":0,\"offset\":0,\"items\":[],\"previousPage\":\"http://localhost/api/v1/categories/1/goods/?limit=50\",\"nextPage\":null}")));
     }
 
+    @WithMockUser(roles = {"ADMIN"})
     @Test
     void shouldGetAllGoodsWithOffset() throws Exception {
         String url = "/api/v1/categories/1/goods/?offset=1";
@@ -65,6 +74,7 @@ class GoodsRestControllerTest {
                 .andExpect(content().string(containsString("{\"totalItems\":0,\"offset\":1,\"items\":[],\"previousPage\":\"http://localhost/api/v1/categories/1/goods/?offset=1&limit=50\",\"nextPage\":null}")));
     }
 
+    @WithMockUser(roles = {"ADMIN"})
     @Test
     void shouldGetAllGoodsWithLimit() throws Exception {
         String url = "/api/v1/categories/1/goods/?limit=1";

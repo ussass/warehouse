@@ -1,3 +1,11 @@
+CREATE TABLE users
+(
+    id         BIGSERIAL    NOT NULL PRIMARY KEY,
+    login           VARCHAR(255) NOT NULL,
+    password        VARCHAR(255) NOT NULL,
+    roles           VARCHAR(255) NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS category
 (
     id   BIGSERIAL    NOT NULL PRIMARY KEY,
@@ -21,5 +29,3 @@ CREATE TABLE IF NOT EXISTS storage
     amount     INT    NOT NULL,
     "goods_id" BIGINT REFERENCES goods (id)
 );
-
-
